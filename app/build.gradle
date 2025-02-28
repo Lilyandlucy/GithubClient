@@ -1,0 +1,124 @@
+plugins {
+    alias(libs.plugins.android.application)
+    alias(libs.plugins.kotlin.android)
+    alias(libs.plugins.kotlin.compose)
+}
+
+def localProperties = new Properties()
+if (rootProject.file("local.properties").exists()) {
+    localProperties.load(new FileInputStream(rootProject.file("local.properties")))
+}
+
+android {
+    namespace 'com.github.client'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId "com.github.client"
+        minSdk 29
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        release {
+            println(localProperties.getProperty("storeFile"))
+            storeFile file(localProperties.getProperty("storeFile"))
+            storePassword localProperties.getProperty("storePassword")
+            keyAlias localProperties.getProperty("keyAlias")
+            keyPassword localProperties.getProperty("keyPassword")
+        }
+    }
+
+    buildTypes {
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            buildConfigField "String", "GITHUB_API_URL", "\"https://api.github.com/\""
+            buildConfigField "String", "GITHUB_CLIENT_ID", "\"Ov23lieBvdUIx0M6js3n\""
+            buildConfigField "String", "GITHUB_CLIENT_SECRET", "\"0ab616162ef6a5d64e1a90581d446b05607659f5\""
+        }
+        debug {
+            buildConfigField "String", "GITHUB_API_URL", "\"https://api.github.com/\""
+            buildConfigField "String", "GITHUB_CLIENT_ID", "\"Ov23lieBvdUIx0M6js3n\""
+            buildConfigField "String", "GITHUB_CLIENT_SECRET", "\"0ab616162ef6a5d64e1a90581d446b05607659f5\""
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_11
+        targetCompatibility JavaVersion.VERSION_11
+    }
+    kotlinOptions {
+        jvmTarget = '11'
+    }
+    buildFeatures {
+        compose true
+        buildConfig true
+    }
+    testOptions {
+        unitTests {
+            includeAndroidResources = true
+            returnDefaultValues = true
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.6.1'
+    implementation 'androidx.activity:activity-compose:1.7.2'
+
+    implementation platform('androidx.compose:compose-bom:2023.03.00')
+    implementation 'androidx.compose.ui:ui'
+    implementation 'androidx.compose.ui:ui-graphics'
+    implementation 'androidx.compose.ui:ui-tooling-preview'
+    implementation 'androidx.compose.material3:material3'
+    implementation 'androidx.navigation:navigation-compose:2.6.0'
+    implementation "androidx.compose.material:material:1.5.0"  // 用于下拉刷新
+
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-compose:2.6.1'
+    implementation 'androidx.lifecycle:lifecycle-runtime-compose:2.6.1'
+
+    implementation 'androidx.datastore:datastore-preferences:1.0.0'
+
+    implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-android:1.7.1'
+
+    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
+    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
+    implementation 'com.squareup.okhttp3:logging-interceptor:4.11.0'
+
+    implementation 'io.coil-kt:coil-compose:2.4.0'
+
+    implementation 'io.insert-koin:koin-android:3.4.0'
+    implementation 'io.insert-koin:koin-androidx-compose:3.4.0'
+
+    testImplementation 'junit:junit:4.13.2'
+    testImplementation 'io.mockk:mockk:1.13.5'
+    testImplementation "org.mockito:mockito-core:4.0.0"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:4.1.0"
+    testImplementation("org.mockito:mockito-inline:4.6.1")
+    testImplementation 'org.jetbrains.kotlinx:kotlinx-coroutines-test:1.7.1'
+    testImplementation "androidx.arch.core:core-testing:2.1.0"
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    androidTestImplementation "androidx.test.espresso:espresso-contrib:3.5.1"
+    androidTestImplementation "androidx.test.ext:junit:1.1.3"
+    androidTestImplementation "androidx.test:runner:1.4.0"
+    androidTestImplementation platform('androidx.compose:compose-bom:2023.03.00')
+    androidTestImplementation 'androidx.compose.ui:ui-test-junit4'
+
+    androidTestImplementation "io.cucumber:cucumber-java:7.3.4"
+    androidTestImplementation "io.cucumber:cucumber-android:7.3.4"
+    androidTestImplementation "io.cucumber:cucumber-picocontainer:7.3.4"
+
+    androidTestImplementation "androidx.test:rules:1.4.0"
+    androidTestImplementation "androidx.test.ext:junit:1.1.3"
+    androidTestImplementation "androidx.test:runner:1.4.0"
+
+    debugImplementation 'androidx.compose.ui:ui-tooling'
+    debugImplementation 'androidx.compose.ui:ui-test-manifest'
+}
