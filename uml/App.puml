@@ -1,0 +1,130 @@
+@startuml
+class GitHubClientApp {
+    onCreate()
+}
+
+package com.github.client.data.api {
+    interface GitHubService {
+        searchRepositories(...)
+        getPublicRepositories(...)
+        getRepository(...)
+        getCurrentUser(...)
+        getUserRepositories(...)
+        createIssue(...)
+    }
+
+    interface AuthService {
+        getAccessToken(...)
+    }
+    class ApiModule {
+        +githubService: GitHubService
+        +authService: AuthService
+    }
+}
+
+package com.github.client.data.repository {
+    interface GitHubRepository {
+        searchRepositories(...)
+        getPopularRepositories(...)
+        getRepositoryDetails(...)
+        getCurrentUser(...)
+        getUserRepositories(...)
+        createIssue(...)
+    }
+
+    interface AuthRepository {
+        getAccessToken()
+        getUserName()
+        isLoggedIn()
+        exchangeCodeForToken(...)
+        saveAuthInfo(...)
+        clearAuthInfo()
+    }
+
+    class GitHubRepositoryImpl implements GitHubRepository {
+        -gitHubService: GitHubService
+    }
+
+    class AuthRepositoryImpl implements AuthRepository {
+        -authService: AuthService
+        -authPreferences: AuthPreferences
+    }
+}
+
+package com.github.client.domain.usecase {
+    class SearchRepositoriesUseCase {
+        -gitHubRepository: GitHubRepository
+    }
+    class GetRepositoryDetailsUseCase {
+        -gitHubRepository: GitHubRepository
+    }
+    class GetUserProfileUseCase {
+        -gitHubRepository: GitHubRepository
+        -authRepository: AuthRepository
+    }
+    class GetUserRepositoriesUseCase {
+        -gitHubRepository: GitHubRepository
+        -authRepository: AuthRepository
+    }
+
+    class LoginUseCase {
+        -authRepository: AuthRepository
+        -gitHubRepository: GitHubRepository
+    }
+
+    class LogoutUseCase {
+      -authRepository: AuthRepository
+    }
+}
+
+package com.github.client.ui {
+    class MainViewModel {
+        -loginUseCase: LoginUseCase
+    }
+}
+
+package com.github.client.ui.screens.home {
+    class HomeViewModel {
+        -getTrendingRepositoriesUseCase: GetTrendingRepositoriesUseCase
+        -checkAuthStatusUseCase: CheckAuthStatusUseCase
+    }
+}
+package com.github.client.ui.screens.login {
+    class LoginViewModel {
+        -checkAuthStatusUseCase: CheckAuthStatusUseCase
+        -logoutUseCase: LogoutUseCase
+    }
+}
+
+package com.github.client.data.local {
+    class AuthPreferences {
+    }
+}
+
+ApiModule -- GitHubService
+ApiModule -- AuthService
+
+GitHubRepositoryImpl -- GitHubService
+AuthRepositoryImpl -- AuthService
+AuthRepositoryImpl -- AuthPreferences
+
+SearchRepositoriesUseCase -- GitHubRepository
+GetRepositoryDetailsUseCase -- GitHubRepository
+GetUserProfileUseCase -- GitHubRepository
+GetUserProfileUseCase -- AuthRepository
+GetUserRepositoriesUseCase -- GitHubRepository
+GetUserRepositoriesUseCase -- AuthRepository
+
+LoginUseCase -- AuthRepository
+LoginUseCase -- GitHubRepository
+LogoutUseCase -- AuthRepository
+
+MainViewModel -- LoginUseCase
+
+HomeViewModel -- GetTrendingRepositoriesUseCase
+HomeViewModel -- CheckAuthStatusUseCase
+LoginViewModel -- CheckAuthStatusUseCase
+LoginViewModel -- LogoutUseCase
+
+GitHubClientApp -- MainViewModel
+@enduml

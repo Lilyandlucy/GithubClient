@@ -1,0 +1,38 @@
+@startuml
+package "UI Layer" {
+    [Compose UI Components]
+    [ViewModels]
+    [Navigation]
+}
+
+package "Domain Layer" {
+    [Use Cases]
+    [Domain Models]
+    interface "GitHub Repository Interface" as DomainGitHubRepository
+    interface "Auth Repository Interface" as DomainAuthRepository
+}
+
+package "Data Layer" {
+    [Data Models]
+    interface "GitHub Service Interface" as GitHubService
+    interface "Auth Service Interface" as AuthService
+    [Auth Preferences (DataStore)]
+    [GitHub Repository Implementation]
+    [Auth Repository Implementation]
+}
+
+"ViewModels" ..> "Use Cases" : Uses
+"Use Cases" ..> "Domain Models" : Uses
+"Use Cases" ..> DomainGitHubRepository : Uses
+"Use Cases" ..> DomainAuthRepository : Uses
+DomainGitHubRepository <.. [GitHub Repository Implementation] : Implements
+DomainAuthRepository <.. [Auth Repository Implementation] : Implements
+
+[GitHub Repository Implementation] ..> [Data Models] : Uses
+[Auth Repository Implementation] ..> [Data Models] : Uses
+[Auth Repository Implementation] ..> [Auth Preferences (DataStore)] : Uses
+[GitHub Repository Implementation] ..> GitHubService : Uses
+[Auth Repository Implementation] ..> AuthService : Uses
+[Compose UI Components] ..> "ViewModels": Uses
+
+@enduml

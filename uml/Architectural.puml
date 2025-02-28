@@ -1,0 +1,55 @@
+@startuml
+left to right direction
+
+package "Outer Layer (Frameworks & Drivers)" {
+    [User Interface (Compose UI)] as UI
+    [Android Framework] as AndroidFramework
+    [Device (DataStore, Network)] as Device
+    [Koin] as KoinFramework
+}
+
+package "Interface Adapters" {
+    [View Models] as ViewModels
+    [API Data Models] as ApiDataModels
+    [Local Data Models] as LocalDataModels
+    [Repository Implementations] as RepoImpl
+}
+
+package "Application Business Rules (Use Cases)" {
+    [Use Cases] as UseCases
+    [Domain Models] as DomainModels
+    interface "GitHubRepository Interface" as GitHubRepoInterface
+    interface "AuthRepository Interface" as AuthRepoInterface
+}
+
+package "Enterprise Business Rules (Entities)" {
+    [Entities (Core Business Logic)] as Entities
+}
+
+UI ..> ViewModels : Uses/Displays
+ViewModels ..> UseCases : Invokes
+
+UseCases ..> DomainModels : Operates On
+UseCases ..> GitHubRepoInterface : Depends On
+UseCases ..> AuthRepoInterface : Depends On
+
+GitHubRepoInterface <.. RepoImpl : Implemented By
+AuthRepoInterface <.. RepoImpl : Implemented By
+
+RepoImpl ..> ApiDataModels : Converts
+RepoImpl ..> LocalDataModels : Converts
+RepoImpl ..> Device : Uses
+
+Device ..> AndroidFramework : Uses
+KoinFramework ..> ViewModels : Injects
+KoinFramework ..> UseCases : Injects
+KoinFramework ..> RepoImpl : Injects
+
+ApiDataModels ..> Entities : Maps To
+LocalDataModels ..> Entities : Maps To
+DomainModels ..> Entities : Maps To
+
+
+
+
+@enduml

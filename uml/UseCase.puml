@@ -1,0 +1,16 @@
+@startuml
+left to right direction
+actor User
+
+rectangle GitHubClient {
+  User -- (Browse Trending Repositories)
+  User -- (Search Repositories)
+  User -- (View Repository Details)
+  User -- (Create Issue)
+  User -- (Login)
+  User -- (Logout)
+  (Login) .> (Browse User Repositories) : includes
+  (Login) .> (View Profile) : includes
+}
+
+@enduml
